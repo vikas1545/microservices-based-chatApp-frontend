@@ -1,0 +1,17 @@
+.ant-form-item-label >label {
+    color: #D1D5DB !important;
+    font-size: medium;
+    font-weight: 500;
+}
+
+.ant-form-item-control-input-content >input {
+    background-color: rgb(190, 188, 186) !important;
+}
+
+.btn-submit {
+    font-size: medium;
+    font-weight: 500;
+    height: 50px;
+    background-color: oklch(54.6% 0.245 262.881);
+    color: #D1D5DB !important;
+}
