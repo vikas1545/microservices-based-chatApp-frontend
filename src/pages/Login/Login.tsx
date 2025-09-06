@@ -1,8 +1,30 @@
-import { Button, Flex, Form, Input, Layout, Space } from 'antd';
+import { Button, Flex, Form, Input, Layout } from 'antd';
 import { ArrowRightOutlined, MailOutlined } from '@ant-design/icons';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 const { Content } = Layout;
+
 export default function Login() {
+
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+
+
+  const onFinish = async (values: any) => {
+    const navigate = useNavigate();
+    try {
+      setLoading(true);
+      const res = await axios.post('http://localhost:5000/api/v1/login', values);
+      console.log('Server response:', res.data);
+      navigate(`/verify?email=${values.email}`);
+    } catch (error) {
+      console.error('Error during login:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (<Layout>
 
     <Content>
@@ -18,15 +40,15 @@ export default function Login() {
               <h1 className='text-4xl font-bold text-white mb-3'>Welcome to chatApp</h1>
               <p className='text-gray-300 text-lg'>Enter your email to continue your journey</p>
             </div>
-            <Form form={form} layout="vertical" autoComplete="off">
-              <Form.Item name="email" label="Email Address" rules={[{ required: true }]} >
-                <Input placeholder='Enter Your Email' size='large' />
+            <Form form={form} layout="vertical" autoComplete="off" onFinish={onFinish}>
+              <Form.Item name="email" label="Email Address" rules={[{ required: true, message: "Email is required" }]} >
+                <Input placeholder='Enter Your Email' size='large'/>
               </Form.Item>
 
               <Form.Item>
 
-                <Button htmlType='submit' type='primary' block className='btn-submit'>
-                  Send verification code <ArrowRightOutlined />
+                <Button htmlType='submit' type='primary' block className='btn-submit mt-2' loading={loading} >
+                  {loading ? "Sending otp to your email" : "Send verification code"} <ArrowRightOutlined />
                 </Button>
 
 

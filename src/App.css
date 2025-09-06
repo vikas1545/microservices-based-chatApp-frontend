@@ -4,9 +4,9 @@
     font-weight: 500;
 }
 
-.ant-form-item-control-input-content >input {
+/* .ant-form-item-control-input-content >input,.ant-otp-input {
     background-color: rgb(190, 188, 186) !important;
-}
+} */
 
 .btn-submit {
     font-size: medium;
