@@ -1,12 +1,15 @@
 
 import './App.css'
+import { AppProvider } from './context/AppContext'
 import PageRoutes from './pages/routes/pageRoutes'
 
 function App() {
 
   return (
     <div>
-      <PageRoutes/>
+      <AppProvider>
+        <PageRoutes />
+      </AppProvider>
     </div>
   )
 }
