@@ -34,6 +34,11 @@ interface AppContextType {
     isAuth: boolean;
     setUser: React.Dispatch<React.SetStateAction<User | null>>;
     setIsAuth: React.Dispatch<React.SetStateAction<boolean>>;
+    logOut: () => void;
+    fetchChats: () => Promise<void>;
+    fetchUsers: () => Promise<void>;
+    chats: Chats[] | null;
+    setChats: React.Dispatch<React.SetStateAction<Chats[] | null>>
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -46,6 +51,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [isAuth, setIsAuth] = useState<boolean>(false);
+    const [chats, setChats] = useState<Chats[] | null>(null);
+    const [users, setUsers] = useState<User[] | null>(null);
 
     const fetchUser = async () => {
         try {
@@ -61,11 +68,46 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         }
     }
 
+    const fetchChats = async () => {
+        try {
+            setLoading(true);
+            const token = Cookies.get('token');
+            const { data } = await axios.get('http://localhost:5002/api/v1/chat/all', { headers: { Authorization: `Bearer ${token}` } });
+            setChats(data.chats);
+        } catch (error) {
+            notification.error({ message: 'Failed to fetch chats' });
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const fetchUsers = async () => {
+        try {
+            setLoading(true);
+            const token = Cookies.get('token');
+            const { data } = await axios.get('http://localhost:5000/api/v1/all-users', { headers: { Authorization: `Bearer ${token}` } });
+            setUsers(data.users);
+        } catch (error) {
+            notification.error({ message: 'Failed to fetch users' });
+        } finally {
+            setLoading(false);
+        }
+    }
+
     useEffect(() => {
         fetchUser();
+        fetchChats();
+        fetchUsers()
     }, []);
 
-    return <AppContext.Provider value={{ user, setUser, loading, isAuth, setIsAuth }}>
+    const logOut = () => {
+        Cookies.remove('token');
+        setUser(null)
+        setIsAuth(false)
+        notification.success({ message: 'Logged Out successfully' });
+    }
+
+    return <AppContext.Provider value={{ user, setUser, loading, isAuth, setIsAuth, logOut, fetchChats, fetchUsers, chats, setChats }}>
         {children}
     </AppContext.Provider>
 }

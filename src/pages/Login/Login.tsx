@@ -1,4 +1,4 @@
-import { Button, Flex, Form, Input, Layout } from 'antd';
+import { Button, Flex, Form, Input, Layout, notification } from 'antd';
 import { ArrowRightOutlined, MailOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -19,10 +19,10 @@ export default function Login() {
     try {
       setLoading(true);
       const res = await axios.post('http://localhost:5000/api/v1/login', values);
-      console.log('Server response:', res.data);
+      notification.success({message:res?.data?.message || 'OTP has been sent successfully',placement:'top'})
       navigate(`/verify?email=${values.email}`);
-    } catch (error) {
-      console.error('Error during login:', error);
+    } catch (error:any) {
+       notification.success({message:error?.res?.data?.message||'Failed to renset OTP'})
     } finally {
       setLoading(false);
     }

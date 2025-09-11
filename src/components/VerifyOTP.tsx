@@ -11,7 +11,7 @@ import Loading from './Loading';
 const { Content } = Layout;
 export default function VerifyOTP() {
 
-    const { isAuth, setIsAuth, setUser, loading: userLoading } = useAppData();
+    const { isAuth, setIsAuth, setUser, loading: userLoading,fetchChats,fetchUsers } = useAppData();
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [resendLoading, setResendLoading] = useState(false);
@@ -44,8 +44,9 @@ export default function VerifyOTP() {
 
             setUser(data.user);
             setIsAuth(true);
-            form.resetFields();
-            // navigate(`/verify?email=${values.email}`);
+            fetchUsers();
+            fetchChats()
+            navigate('/chat');
         } catch (error: any) {
             notification.error({ message: error?.response?.data?.message || 'Verification failed. Please try again.' });
         } finally {
@@ -56,10 +57,11 @@ export default function VerifyOTP() {
     const resendOTP = async () => {
         try {
             setResendLoading(true);
-            await axios.post('http://localhost:5000/api/v1/login', { email });
+            const res=await axios.post('http://localhost:5000/api/v1/login', { email });
             setTimer(60);
-        } catch (error) {
-            console.error('Error resending OTP:', error);
+            notification.success({message:res?.data?.message || 'OTP has been sent successfully',placement:'top'})
+        } catch (error:any) {
+            notification.success({message:error?.res?.data?.message||'Failed to renset OTP'})
         } finally {
             setResendLoading(false);
         }
