@@ -30,6 +30,7 @@ export interface Chats {
 
 interface AppContextType {
     user: User | null;
+    users: User[] | null;
     loading: boolean;
     isAuth: boolean;
     setUser: React.Dispatch<React.SetStateAction<User | null>>;
@@ -107,7 +108,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         notification.success({ message: 'Logged Out successfully' });
     }
 
-    return <AppContext.Provider value={{ user, setUser, loading, isAuth, setIsAuth, logOut, fetchChats, fetchUsers, chats, setChats }}>
+    return <AppContext.Provider value={{
+        user, setUser, loading, isAuth, setIsAuth, logOut,
+        fetchChats, fetchUsers, users, chats, setChats
+    }}>
         {children}
     </AppContext.Provider>
 }
