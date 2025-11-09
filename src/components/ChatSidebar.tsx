@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import type { User } from '../context/AppContext';
-import { CloseOutlined, MessageOutlined, PlusOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons';
+import { ArrowRightOutlined, ArrowUpOutlined, CloseOutlined, DownSquareOutlined, EnterOutlined, LogoutOutlined, MessageOutlined, PlusOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Flex, Input } from 'antd';
+import { Link } from 'react-router-dom';
 interface ChatSidebarProps {
     sidebarOpen: boolean;
     setSidebarOpen: (open: boolean) => void;
@@ -80,8 +81,8 @@ function ChatSidebar({ sidebarOpen, setShowAllUsers, setSidebarOpen, showAllUser
                                 chats.map((chat) => {
                                     const latestMessage = chat.chat.latestMessage;
                                     const isSelected = selectedUser === chat.chat._id;
-                                    const isSentByMe = latestMessage.sender === loggedInUser?._id;
-                                    const unseenCount = chat.chat.unseenCount || 0;
+                                    const isSentByMe = latestMessage?.sender === loggedInUser?._id;
+                                    const unseenCount = chat.chat.unseenCount || 1;
                                     return <div key={chat.chat._id}
                                         className={`w-full text-left p-4 rounded-lg transition-colors cursor-pointer 
                                     ${isSelected ? 'bg-blue-500 border border-blue-500' : 'border border-gray-700 hover:bg-gray-600'}`}
@@ -109,14 +110,49 @@ function ChatSidebar({ sidebarOpen, setShowAllUsers, setSidebarOpen, showAllUser
                                                         </div>
                                                     )}
                                                 </div>
+                                                {
+                                                    latestMessage && <div className='flex items-center gap-2'>
+                                                        {isSentByMe ? <ArrowUpOutlined style={{ color: '#135dff' }} /> :
+                                                            <ArrowRightOutlined style={{ color: 'green' }} />
+                                                        }
+                                                        <span className='text-sm text-gray-400'>
+                                                            {latestMessage?.text}
+                                                        </span>
+                                                    </div>
+                                                }
                                             </div>
-
                                         </div>
                                     </div>
                                 })}
 
-                        </div> : <div>No conversation yet</div>
+                        </div> : <div className='flex flex-col items-center justify-center h-full text-center'>
+                            <div className='p-4 bg-gray-800 rounded-full mb-4'>
+                                <MessageOutlined className='text-gray-400 w-10 h-10' />
+                            </div>
+                            <p className='text-gray-400 font-medium'>No conversation yet</p>
+                            <p className='text-sm text-gray-500 mt-1'>Start a new chat to begin messaging</p>
+                        </div>
                 }
+            </div>
+
+            <div className='p-4 border-t border-gray-700 space-y-2'>
+                <Link to='/profile' className='flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors'>
+                    {/* <Button block>Profile</Button> */}
+                    <div className='flex gap-2'>
+                        <UserOutlined className='text-gray-300 w-5 h-5' />
+                        <span className='text-white font-medium'>Profile</span>
+                    </div>
+                </Link>
+
+
+                <div className='flex gap-3 px-4 py-3 rounded-lg  hover:bg-red-800 transition-colors'>
+                    <button onClick={handleLogOut} className='w-full text-left'>
+                        <div className='flex gap-2 items-center'>
+                            <LogoutOutlined className='text-gray-300 w-5 h-5' />
+                            <span className='text-white font-medium'>Logout</span>
+                        </div>
+                    </button>
+                </div>
             </div>
         </aside>
     )
