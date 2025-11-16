@@ -1,8 +1,12 @@
 import React, { useState } from 'react'
 import type { User } from '../context/AppContext';
-import { ArrowRightOutlined, ArrowUpOutlined, CloseOutlined, DownSquareOutlined, EnterOutlined, LogoutOutlined, MessageOutlined, PlusOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Flex, Input } from 'antd';
+import {
+    ArrowRightOutlined, ArrowUpOutlined, CloseOutlined, LogoutOutlined,
+    MessageOutlined, PlusOutlined, SearchOutlined, UserOutlined
+} from '@ant-design/icons';
+import { Button, Input } from 'antd';
 import { Link } from 'react-router-dom';
+
 interface ChatSidebarProps {
     sidebarOpen: boolean;
     setSidebarOpen: (open: boolean) => void;
@@ -14,15 +18,13 @@ interface ChatSidebarProps {
     selectedUser: string | null;
     setSelectedUser: (userId: string | null) => void;
     handleLogOut: () => void;
+    createChat: (u: User) => void;
 }
 
 function ChatSidebar({ sidebarOpen, setShowAllUsers, setSidebarOpen, showAllUsers,
-    users, loggedInUser, chats, selectedUser, setSelectedUser, handleLogOut }: ChatSidebarProps) {
-
-    console.log('chats', chats);
-
+    users, loggedInUser, chats, selectedUser, setSelectedUser, handleLogOut, createChat }: ChatSidebarProps) {
     const [searchQuery, setSearchQuery] = useState('');
-
+    console.log('chats :', chats);
 
     return (
         <aside className={`fixed z-20 sm:static top-0 left-0 h-screen w-80 bg-gray-900 border-r border-gray-700 transform 
@@ -66,7 +68,8 @@ function ChatSidebar({ sidebarOpen, setShowAllUsers, setSidebarOpen, showAllUser
                                     user.name.toLowerCase().includes(searchQuery.toLowerCase())).map((user) => (
 
                                         <div key={user._id}
-                                            onClick={() => setSearchQuery('')}
+                                            // onClick={() => setSearchQuery('')}
+                                            onClick={() => createChat(user)}
                                             className={`p-3 rounded-lg bg-gray-700 hover:bg-gray-500 cursor-pointer flex items-center gap-2 `}>
                                             <Button shape='circle' icon={<UserOutlined />} />
                                             <span className='text-white font-medium'>{user.name}</span>
@@ -82,7 +85,7 @@ function ChatSidebar({ sidebarOpen, setShowAllUsers, setSidebarOpen, showAllUser
                                     const latestMessage = chat.chat.latestMessage;
                                     const isSelected = selectedUser === chat.chat._id;
                                     const isSentByMe = latestMessage?.sender === loggedInUser?._id;
-                                    const unseenCount = chat.chat.unseenCount || 1;
+                                    const unseenCount = chat.chat.unseenCount || 0;
                                     return <div key={chat.chat._id}
                                         className={`w-full text-left p-4 rounded-lg transition-colors cursor-pointer 
                                     ${isSelected ? 'bg-blue-500 border border-blue-500' : 'border border-gray-700 hover:bg-gray-600'}`}
