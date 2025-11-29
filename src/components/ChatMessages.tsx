@@ -43,7 +43,7 @@ function ChatMessages({ selectedUser, messages, loggedInUser }: ChatMessagesProp
                             <>
                                 {
                                     uniqueMessage?.map((e, i) => {
-                                    console.log('e :', e);
+                                        console.log('e :', e);
                                         const isSentByMe = e.sender === loggedInUser?._id; //senderId or sender
                                         const uniqueKey = `${e._id}-${i}`;
 
@@ -66,9 +66,10 @@ function ChatMessages({ selectedUser, messages, loggedInUser }: ChatMessagesProp
                                                     {isSentByMe && <div className='flex items-center ml-1'>
                                                         {
                                                             e.seen ? <div className='flex items-center gap-1 text-blue-400:'>
-                                                               
-                                                                <CheckOutlined className='w-3 h-3 text-gray-500'/>
-                                                                {e.seenAt && <span className='text-xs text-gray-400'>
+
+                                                                {e.seenAt && <span className='text-xs text-blue-400'>
+                                                                    <CheckOutlined className='w-3 h-2 text-[calc(text-xs -6px)]' />
+                                                                    <CheckOutlined className='w-3 h-2 mr-1 ' />
                                                                     {dayjs(e.seenAt).format("hh:mm A")}
                                                                 </span>}
                                                             </div> : <CheckOutlined className='w-3 h-3 text-gray-500' />
@@ -80,7 +81,7 @@ function ChatMessages({ selectedUser, messages, loggedInUser }: ChatMessagesProp
 
                                     })
                                 }
-                                <div ref={bottomRef}/>
+                                <div ref={bottomRef} />
                             </>
                         )
 
