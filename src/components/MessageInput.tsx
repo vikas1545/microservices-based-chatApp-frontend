@@ -12,8 +12,6 @@ const MessageInput = ({ selectedUser, message, setMessage, handleMessageSend }: 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
-  console.log(message);
-
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     if (!message.trim() && !imageFile) return;
@@ -54,7 +52,6 @@ const MessageInput = ({ selectedUser, message, setMessage, handleMessageSend }: 
           onChange={(e) => setMessage(e.target.value)}
         />
 
-        {/* <button>{isUploading?<Spin spinning={true}/>:<div><SendOutlined className="w-4 h-4"/></div>}</button> */}
        <Button htmlType="submit" type="primary" loading={isUploading} disabled={(!imageFile && !message)} style={{backgroundColor:'#135dff',color:'white'}}>
         <SendOutlined className="w-4 h-4"/></Button>
       </div>

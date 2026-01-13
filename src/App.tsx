@@ -2,13 +2,17 @@
 import './App.css'
 import { AppProvider } from './context/AppContext'
 import PageRoutes from './pages/routes/pageRoutes'
+import { SocketProvider } from './context/SocketContext'
 
 function App() {
 
   return (
     <div>
       <AppProvider>
-        <PageRoutes />
+        <SocketProvider>
+          <PageRoutes />
+        </SocketProvider>
+
       </AppProvider>
     </div>
   )

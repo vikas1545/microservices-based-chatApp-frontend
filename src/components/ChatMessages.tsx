@@ -27,7 +27,7 @@ function ChatMessages({ selectedUser, messages, loggedInUser }: ChatMessagesProp
     }, [messages]);
 
 
-    console.log('messages :', messages);
+    
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });

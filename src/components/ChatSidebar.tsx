@@ -4,7 +4,7 @@ import {
     ArrowRightOutlined, ArrowUpOutlined, CloseOutlined, LogoutOutlined,
     MessageOutlined, PlusOutlined, SearchOutlined, UserOutlined
 } from '@ant-design/icons';
-import { Button, Input } from 'antd';
+import { Button, Flex, Input } from 'antd';
 import { Link } from 'react-router-dom';
 
 interface ChatSidebarProps {
@@ -19,12 +19,13 @@ interface ChatSidebarProps {
     setSelectedUser: (userId: string | null) => void;
     handleLogOut: () => void;
     createChat: (u: User) => void;
+    onlineUsers: string[];
 }
 
 function ChatSidebar({ sidebarOpen, setShowAllUsers, setSidebarOpen, showAllUsers,
-    users, loggedInUser, chats, selectedUser, setSelectedUser, handleLogOut, createChat }: ChatSidebarProps) {
+    users, loggedInUser, chats, selectedUser, setSelectedUser, handleLogOut, createChat, onlineUsers }: ChatSidebarProps) {
     const [searchQuery, setSearchQuery] = useState('');
-    console.log('chats :', chats);
+
 
     return (
         <aside className={`fixed z-20 sm:static top-0 left-0 h-screen w-80 bg-gray-900 border-r border-gray-700 transform 
@@ -68,11 +69,16 @@ function ChatSidebar({ sidebarOpen, setShowAllUsers, setSidebarOpen, showAllUser
                                     user.name.toLowerCase().includes(searchQuery.toLowerCase())).map((user) => (
 
                                         <div key={user._id}
-                                            // onClick={() => setSearchQuery('')}
                                             onClick={() => createChat(user)}
                                             className={`p-3 rounded-lg bg-gray-700 hover:bg-gray-500 cursor-pointer flex items-center gap-2 `}>
-                                            <Button shape='circle' icon={<UserOutlined />} />
-                                            <span className='text-white font-medium'>{user.name}</span>
+                                            <Button shape='circle' icon={<UserOutlined />}/>
+                                            
+                                            <Flex vertical gap={1}>
+                                                <div className='text-white font-medium'>{user.name}</div>
+                                                <div className='text-xs mt-0.5'>{onlineUsers.includes(user._id) ? 
+                                                    <span className='text-green-500'>Online</span> : <span className='text-gray-500'>Offline</span>
+                                                }</div>
+                                            </Flex>
                                         </div>
 
                                     ))
@@ -99,6 +105,10 @@ function ChatSidebar({ sidebarOpen, setShowAllUsers, setSidebarOpen, showAllUser
                                                 <div className='w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center'>
                                                     <div ><UserOutlined /></div>
                                                 </div>
+                                                {onlineUsers.includes(chat.user._id) &&
+                                                    <span className='absolute top-0 right-0 w-3.5 h-3.5 
+                                                bg-green-500 border-2 border-gray-100 rounded-full'></span>
+                                                }
                                             </div>
 
                                             <div className='flex-1 min-w-0'>
