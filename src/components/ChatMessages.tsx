@@ -32,6 +32,7 @@ function ChatMessages({ selectedUser, messages, loggedInUser }: ChatMessagesProp
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [selectedUser, uniqueMessage])
+    
 
     return (
         <div className='flex-1 overflow-hidden'>
@@ -43,8 +44,8 @@ function ChatMessages({ selectedUser, messages, loggedInUser }: ChatMessagesProp
                             <>
                                 {
                                     uniqueMessage?.map((e, i) => {
-                                        console.log('e :', e);
-                                        const isSentByMe = e.sender === loggedInUser?._id; //senderId or sender
+                                        
+                                        const isSentByMe = e.sender === loggedInUser?._id;
                                         const uniqueKey = `${e._id}-${i}`;
 
                                         return (

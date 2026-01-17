@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useAppData, type User } from '../../context/AppContext';
 import Loading from '../../components/Loading';
@@ -11,7 +11,9 @@ import ChatHeader from '../../components/ChatHeader';
 import ChatMessages from '../../components/ChatMessages';
 import MessageInput from '../../components/MessageInput';
 import { socketData } from '../../context/SocketContext';
+const apiUrl = import.meta.env.VITE_CHAT_BASE_URL;
 
+console.log('API URL:', apiUrl);
 export interface Message {
   _id: string;
   chatId: string;
@@ -66,6 +68,58 @@ export default function Chat() {
     } catch (error) {
       notification.error({ message: 'Failed to start chat', placement: 'top' })
     }
+  }
+
+  const moveChatToTop = (chatId: string, newMessage: any, updatedUnseenCount = true) => {
+
+    setChats((prev) => {
+      if (!prev) return null;
+
+      const updatedChats = [...prev];
+      const chatIndex = updatedChats.findIndex((chat) => chat.chat._id === chatId)
+
+      if (chatIndex !== -1) {
+        const [moveChat] = updatedChats.slice(chatIndex, 1);
+
+        const updatedChat = {
+          ...moveChat,
+          chat: {
+            ...moveChat?.chat,
+            latestMessage: {
+              text: newMessage.text,
+              sender: newMessage.sender
+            },
+            updatedAt: new Date().toString(),
+            unseenCount: updatedUnseenCount && newMessage.sender !== loggedInUser?._id ?
+              (moveChat.chat.unseenCount || 0) + 1 : moveChat.chat.unseenCount || 0
+
+          }
+        }
+
+        updatedChats.unshift(updatedChat);
+      }
+      return updatedChats;
+    })
+
+  };
+
+  const resetUnseenCount = (chatId: string) => {
+    setChats((prev) => {
+      if (!prev) return null;
+
+      return prev.map((chat) => {
+        if (chat.chat._id === chatId) {
+          return {
+            ...chat,
+            chat: {
+              ...chat.chat,
+              unseenCount: 0
+            }
+          }
+        }
+        return chat;
+      });
+    });
   }
 
   const createChat = async (u: User) => {
@@ -129,6 +183,8 @@ export default function Chat() {
       setMessage('');
 
       const displayText = imageFile ? "📷 image" : 'Message sent';
+      moveChatToTop(selectedUser!, { text: displayText, sender: data.sender }, false);
+      
     } catch (error: any) {
       const errMsg = error.response?.data?.message || 'Failed to send message';
       notification.error({ message: errMsg, placement: 'top' })
@@ -157,6 +213,52 @@ export default function Chat() {
 
 
   useEffect(() => {
+    socket?.on("newMessage", (message) => {
+      console.log('Received new message via socket:', message);
+
+      if (selectedUser === message.chatId) {
+        setMessages((prev) => {
+          const currentMessages = prev || [];
+          const messageExists = currentMessages.some(msg => msg._id === message._id);
+          if (!messageExists) {
+            return [...currentMessages, message];
+          }
+          return currentMessages;
+        });
+
+        moveChatToTop(message.chatId, message, false);
+      } else {
+        moveChatToTop(message.chatId, message, true);
+      }
+    });
+
+    socket?.on("messagesSeen", (data) => {
+      console.log('Message seen data :', data);
+      if (selectedUser === data.chatId) {
+        setMessages((prev) => {
+          if (!prev) return null;
+
+          return prev.map((msg) => {
+            if (msg.sender === loggedInUser?._id && data.messageIds && data.messageIds.includes(msg._id)) {
+              return {
+                ...msg,
+                seen: true,
+                seenAt: new Date().toString()
+              }
+            }
+            else if (msg.sender === loggedInUser?._id && !data.messageIds) {
+              return {
+                ...msg,
+                seen: true,
+                seenAt: new Date().toString()
+              }
+            }
+            return msg;
+          });
+        });
+      }
+    });
+
     socket?.on("userTyping", (data) => {
       console.log('Received user typing :', data);
       if (data.chatId === selectedUser && data.userId !== loggedInUser?._id) {
@@ -172,15 +274,18 @@ export default function Chat() {
     })
 
     return () => {
+      socket?.off("newMessage");
+      socket?.off("messagesSeen");
       socket?.off("userTyping");
       socket?.off("userStoppedTyping");
     }
-  }, [socket, selectedUser, loggedInUser?._id])
+  }, [socket, selectedUser, setChats, loggedInUser?._id])
 
   useEffect(() => {
     if (selectedUser) {
       fetchChat();
       setIsTyping(false);
+      resetUnseenCount(selectedUser);
       socket?.emit('joinChat', selectedUser)
 
       return () => {
@@ -202,6 +307,9 @@ export default function Chat() {
   if (loading) {
     return <Loading />;
   }
+
+  console.log();
+
 
   return (
     <div className='min-h-screen flex bg-gray-900 text-white relative overflow-hidden'>
