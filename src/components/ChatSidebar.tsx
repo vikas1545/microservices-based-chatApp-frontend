@@ -26,6 +26,7 @@ function ChatSidebar({ sidebarOpen, setShowAllUsers, setSidebarOpen, showAllUser
     users, loggedInUser, chats, selectedUser, setSelectedUser, handleLogOut, createChat, onlineUsers }: ChatSidebarProps) {
     const [searchQuery, setSearchQuery] = useState('');
 
+console.log('chats :',chats);
 
     return (
         <aside className={`fixed z-20 sm:static top-0 left-0 h-screen w-80 bg-gray-900 border-r border-gray-700 transform 

@@ -183,7 +183,7 @@ export default function Chat() {
       setMessage('');
 
       const displayText = imageFile ? "📷 image" : 'Message sent';
-      moveChatToTop(selectedUser!, { text: displayText, sender: data.sender }, false);
+      //moveChatToTop(selectedUser!, { text: displayText, sender: data.sender }, false);
       
     } catch (error: any) {
       const errMsg = error.response?.data?.message || 'Failed to send message';
@@ -226,9 +226,9 @@ export default function Chat() {
           return currentMessages;
         });
 
-        moveChatToTop(message.chatId, message, false);
+       // moveChatToTop(message.chatId, message, false);
       } else {
-        moveChatToTop(message.chatId, message, true);
+       // moveChatToTop(message.chatId, message, true);
       }
     });
 
@@ -308,7 +308,6 @@ export default function Chat() {
     return <Loading />;
   }
 
-  console.log();
 
 
   return (
