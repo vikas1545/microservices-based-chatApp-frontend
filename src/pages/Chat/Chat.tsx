@@ -13,7 +13,6 @@ import MessageInput from '../../components/MessageInput';
 import { socketData } from '../../context/SocketContext';
 const apiUrl = import.meta.env.VITE_CHAT_BASE_URL;
 
-console.log('API URL:', apiUrl);
 export interface Message {
   _id: string;
   chatId: string;
