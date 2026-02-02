@@ -13,9 +13,8 @@ interface SocketProviderProps {
     children: ReactNode;
 }
 
-
-//const chatServerURL = import.meta.env.VITE_CHAT_SERVER_URL as string;
-const chat_service = "http://localhost:5002";
+const socket_service = import.meta.env.VITE_SOCKET_URL;
+// const chat_service = "http://localhost:5002";
 
 export const SocketProvider = ({ children }: SocketProviderProps) => {
 
@@ -25,7 +24,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
 
     useEffect(() => {
         if (!user?._id) return;
-        const newSocket = io(chat_service, {
+        const newSocket = io(socket_service, {
             query: { userId: user._id }
         });
         setSocket(newSocket);

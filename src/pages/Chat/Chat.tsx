@@ -11,8 +11,8 @@ import ChatHeader from '../../components/ChatHeader';
 import ChatMessages from '../../components/ChatMessages';
 import MessageInput from '../../components/MessageInput';
 import { socketData } from '../../context/SocketContext';
-const apiUrl = import.meta.env.VITE_CHAT_BASE_URL;
 
+const chat_service = import.meta.env.VITE_CHAT_BASE_URL;
 export interface Message {
   _id: string;
   chatId: string;
@@ -58,7 +58,7 @@ export default function Chat() {
   const fetchChat = async () => {
     try {
       const token = Cookies.get('token');
-      const { data } = await axios.get(`http://localhost:5002/api/v1/message/${selectedUser}`,
+      const { data } = await axios.get(`${chat_service}/message/${selectedUser}`,
         { headers: { Authorization: `Bearer ${token}` } });
 
       setMessages(data.messages);
@@ -124,7 +124,7 @@ export default function Chat() {
   const createChat = async (u: User) => {
     try {
       const token = Cookies.get('token');
-      const { data } = await axios.post('http://localhost:5002/api/v1/chat/new', {
+      const { data } = await axios.post(`${chat_service}/chat/new`, {
         userId: loggedInUser?._id,
         otherUserId: u._id
       }, { headers: { Authorization: `Bearer ${token}` } });
@@ -168,7 +168,7 @@ export default function Chat() {
         formData.append('image', imageFile);
       }
 
-      const { data } = await axios.post('http://localhost:5002/api/v1/chat/message', formData,
+      const { data } = await axios.post(`${chat_service}/chat/message`, formData,
         { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } });
 
       setMessages((prev) => {
@@ -183,7 +183,7 @@ export default function Chat() {
 
       const displayText = imageFile ? "📷 image" : 'Message sent';
       //moveChatToTop(selectedUser!, { text: displayText, sender: data.sender }, false);
-      
+
     } catch (error: any) {
       const errMsg = error.response?.data?.message || 'Failed to send message';
       notification.error({ message: errMsg, placement: 'top' })
@@ -214,7 +214,6 @@ export default function Chat() {
   useEffect(() => {
     socket?.on("newMessage", (message) => {
       console.log('Received new message via socket:', message);
-
       if (selectedUser === message.chatId) {
         setMessages((prev) => {
           const currentMessages = prev || [];
@@ -225,9 +224,9 @@ export default function Chat() {
           return currentMessages;
         });
 
-       // moveChatToTop(message.chatId, message, false);
+        // moveChatToTop(message.chatId, message, false);
       } else {
-       // moveChatToTop(message.chatId, message, true);
+        // moveChatToTop(message.chatId, message, true);
       }
     });
 

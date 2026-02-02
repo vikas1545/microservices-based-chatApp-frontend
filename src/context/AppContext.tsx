@@ -3,6 +3,8 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import Cookies from "js-cookie";
 import axios from "axios";
 import { notification } from "antd";
+const user_service = import.meta.env.VITE_USER_BASE_URL;
+const chat_service = import.meta.env.VITE_CHAT_BASE_URL;
 
 export interface User {
     _id: string;
@@ -59,7 +61,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         try {
             setLoading(true);
             const token = Cookies.get('token');
-            const { data } = await axios.get('http://localhost:5000/api/v1/me', { headers: { Authorization: `Bearer ${token}` } });
+            const { data } = await axios.get(`${user_service}/me`, { headers: { Authorization: `Bearer ${token}` } });
             setUser(data);
             setIsAuth(true);
         } catch (error) {
@@ -73,7 +75,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         try {
             setLoading(true);
             const token = Cookies.get('token');
-            const { data } = await axios.get('http://localhost:5002/api/v1/chat/all', { headers: { Authorization: `Bearer ${token}` } });
+            const { data } = await axios.get(`${chat_service}/chat/all`, { headers: { Authorization: `Bearer ${token}` } });
             setChats(data.chats);
         } catch (error) {
             notification.error({ message: 'Failed to fetch chats' });
@@ -86,7 +88,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         try {
             setLoading(true);
             const token = Cookies.get('token');
-            const { data } = await axios.get('http://localhost:5000/api/v1/all-users', { headers: { Authorization: `Bearer ${token}` } });
+            const { data } = await axios.get(`${user_service}/all-users`, { headers: { Authorization: `Bearer ${token}` } });
             setUsers(data.users);
         } catch (error) {
             notification.error({ message: 'Failed to fetch users' });

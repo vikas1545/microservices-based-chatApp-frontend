@@ -2,13 +2,14 @@
 import { Button, Flex, Form, Input, Layout, notification } from 'antd';
 import { ArrowRightOutlined, LeftOutlined, LockOutlined } from '@ant-design/icons';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useAppData } from '../context/AppContext';
 import Loading from './Loading';
 
 const { Content } = Layout;
+const user_service = import.meta.env.VITE_USER_BASE_URL;
 export default function VerifyOTP() {
 
     const { isAuth, setIsAuth, setUser, loading: userLoading,fetchChats,fetchUsers } = useAppData();
@@ -38,7 +39,7 @@ export default function VerifyOTP() {
                 return;
             }
             setLoading(true);
-            const { data } = await axios.post('http://localhost:5000/api/v1/verify', { email, otp: values.otp });
+            const { data } = await axios.post(`${user_service}/verify`, { email, otp: values.otp });
             notification.success({ message: data.message || 'Verification successful!', duration: 3 });
             Cookies.set('token', data.token, { expires: 15, secure: false, path: '/' });
 
@@ -57,11 +58,11 @@ export default function VerifyOTP() {
     const resendOTP = async () => {
         try {
             setResendLoading(true);
-            const res=await axios.post('http://localhost:5000/api/v1/login', { email });
+            const res=await axios.post(`${user_service}/login`, { email });
             setTimer(60);
             notification.success({message:res?.data?.message || 'OTP has been sent successfully',placement:'top'})
         } catch (error:any) {
-            notification.success({message:error?.res?.data?.message||'Failed to renset OTP'})
+            notification.error({message:error?.response?.data?.message||'Failed to resend OTP'})
         } finally {
             setResendLoading(false);
         }

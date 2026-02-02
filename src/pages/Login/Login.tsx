@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useAppData } from '../../context/AppContext';
 import Loading from '../../components/Loading';
 const { Content } = Layout;
+const user_service = import.meta.env.VITE_USER_BASE_URL;
 
 export default function Login() {
 
@@ -18,11 +19,11 @@ export default function Login() {
 
     try {
       setLoading(true);
-      const res = await axios.post('http://localhost:5000/api/v1/login', values);
+      const res = await axios.post(`${user_service}/login`, values);
       notification.success({message:res?.data?.message || 'OTP has been sent successfully',placement:'top'})
       navigate(`/verify?email=${values.email}`);
     } catch (error:any) {
-       notification.success({message:error?.res?.data?.message||'Failed to renset OTP'})
+       notification.error({message:error?.response?.data?.message||'Failed to send OTP'})
     } finally {
       setLoading(false);
     }
