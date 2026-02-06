@@ -2,16 +2,17 @@
 import { Button, Flex, Form, Input, Layout, notification } from 'antd';
 import { ArrowRightOutlined, LeftOutlined, LockOutlined } from '@ant-design/icons';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useAppData } from '../context/AppContext';
 import Loading from './Loading';
 
 const { Content } = Layout;
+const user_service = import.meta.env.VITE_USER_BASE_URL;
 export default function VerifyOTP() {
 
-    const { isAuth, setIsAuth, setUser, loading: userLoading } = useAppData();
+    const {  setIsAuth, setUser, loading: userLoading,fetchChats,fetchUsers } = useAppData();
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [resendLoading, setResendLoading] = useState(false);
@@ -38,14 +39,15 @@ export default function VerifyOTP() {
                 return;
             }
             setLoading(true);
-            const { data } = await axios.post('http://localhost:5000/api/v1/verify', { email, otp: values.otp });
+            const { data } = await axios.post(`${user_service}/verify`, { email, otp: values.otp });
             notification.success({ message: data.message || 'Verification successful!', duration: 3 });
             Cookies.set('token', data.token, { expires: 15, secure: false, path: '/' });
 
             setUser(data.user);
             setIsAuth(true);
-            form.resetFields();
-            // navigate(`/verify?email=${values.email}`);
+            fetchUsers();
+            fetchChats()
+            navigate('/chat');
         } catch (error: any) {
             notification.error({ message: error?.response?.data?.message || 'Verification failed. Please try again.' });
         } finally {
@@ -56,10 +58,11 @@ export default function VerifyOTP() {
     const resendOTP = async () => {
         try {
             setResendLoading(true);
-            await axios.post('http://localhost:5000/api/v1/login', { email });
+            const res=await axios.post(`${user_service}/login`, { email });
             setTimer(60);
-        } catch (error) {
-            console.error('Error resending OTP:', error);
+            notification.success({message:res?.data?.message || 'OTP has been sent successfully',placement:'top'})
+        } catch (error:any) {
+            notification.error({message:error?.response?.data?.message||'Failed to resend OTP'})
         } finally {
             setResendLoading(false);
         }
