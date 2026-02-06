@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { CloseOutlined, PaperClipOutlined, SendOutlined } from '@ant-design/icons';
-import { Button, Spin } from "antd";
+import { Button } from "antd";
 interface MessageInputProp {
-  selectedUser: String | null;
+  selectedUser?: String | null;
   message: string;
   setMessage: (message: string) => void;
   handleMessageSend: (e: any, imageFile?: File | null) => Promise<void>;
 }
 
-const MessageInput = ({ selectedUser, message, setMessage, handleMessageSend }: MessageInputProp) => {
+const MessageInput = ({  message, setMessage, handleMessageSend }: MessageInputProp) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 

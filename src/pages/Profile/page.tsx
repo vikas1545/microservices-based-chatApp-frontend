@@ -11,7 +11,6 @@ const ProfilePage = () => {
 
     const { user, isAuth, loading, setUser } = useAppData();
     const [isLoading, setIsLoading] = useState(false);
-    const [name, setName] = useState<string | undefined>("");
     const [form] = Form.useForm();
     const navigate = useNavigate()
 

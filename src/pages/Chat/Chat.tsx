@@ -69,6 +69,8 @@ export default function Chat() {
     }
   }
 
+  /*
+
   const moveChatToTop = (chatId: string, newMessage: any, updatedUnseenCount = true) => {
 
     setChats((prev) => {
@@ -101,6 +103,8 @@ export default function Chat() {
     })
 
   };
+
+  */
 
   const resetUnseenCount = (chatId: string) => {
     setChats((prev) => {
@@ -181,7 +185,7 @@ export default function Chat() {
       });
       setMessage('');
 
-      const displayText = imageFile ? "📷 image" : 'Message sent';
+      //const displayText = imageFile ? "📷 image" : 'Message sent';
       //moveChatToTop(selectedUser!, { text: displayText, sender: data.sender }, false);
 
     } catch (error: any) {

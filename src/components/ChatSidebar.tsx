@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import type { User } from '../context/AppContext';
 import {
     ArrowRightOutlined, ArrowUpOutlined, CloseOutlined, LogoutOutlined,
@@ -72,11 +72,11 @@ function ChatSidebar({ sidebarOpen, setShowAllUsers, setSidebarOpen, showAllUser
                                         <div key={user._id}
                                             onClick={() => createChat(user)}
                                             className={`p-3 rounded-lg bg-gray-700 hover:bg-gray-500 cursor-pointer flex items-center gap-2 `}>
-                                            <Button shape='circle' icon={<UserOutlined />}/>
-                                            
+                                            <Button shape='circle' icon={<UserOutlined />} />
+
                                             <Flex vertical gap={1}>
                                                 <div className='text-white font-medium'>{user.name}</div>
-                                                <div className='text-xs mt-0.5'>{onlineUsers.includes(user._id) ? 
+                                                <div className='text-xs mt-0.5'>{onlineUsers.includes(user._id) ?
                                                     <span className='text-green-500'>Online</span> : <span className='text-gray-500'>Offline</span>
                                                 }</div>
                                             </Flex>

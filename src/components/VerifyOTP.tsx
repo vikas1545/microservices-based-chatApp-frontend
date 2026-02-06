@@ -12,7 +12,7 @@ const { Content } = Layout;
 const user_service = import.meta.env.VITE_USER_BASE_URL;
 export default function VerifyOTP() {
 
-    const { isAuth, setIsAuth, setUser, loading: userLoading,fetchChats,fetchUsers } = useAppData();
+    const {  setIsAuth, setUser, loading: userLoading,fetchChats,fetchUsers } = useAppData();
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [resendLoading, setResendLoading] = useState(false);
